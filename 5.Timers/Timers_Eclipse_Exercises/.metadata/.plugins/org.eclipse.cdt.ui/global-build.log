@@ -1,0 +1,31 @@
+14:03:47 **** Build of configuration Debug for project Challenge1 ****
+make all 
+Building file: ../Challenge1.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"Challenge1.d" -MT"Challenge1.o" -c -o "Challenge1.o" "../Challenge1.c"
+Finished building: ../Challenge1.c
+ 
+Building target: Challenge1.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,Challenge1.map -mmcu=atmega16 -o "Challenge1.elf"  ./Challenge1.o   
+Finished building target: Challenge1.elf
+ 
+Invoking: AVR Create Extended Listing
+avr-objdump -h -S Challenge1.elf  >"Challenge1.lss"
+Finished building: Challenge1.lss
+ 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 Challenge1.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:     298 bytes (1.8% Full)
+(.text + .data + .bootloader)
+
+Data:          1 bytes (0.1% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 

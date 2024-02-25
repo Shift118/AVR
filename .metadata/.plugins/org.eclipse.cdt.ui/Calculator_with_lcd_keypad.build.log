@@ -1,0 +1,20 @@
+03:07:18 **** Incremental Build of configuration Debug for project Calculator_with_lcd_keypad ****
+make all 
+'Invoking: Print Size'
+avr-size --format=avr --mcu=atmega16 Calculator_with_lcd_keypad.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:   10460 bytes (63.8% Full)
+(.text + .data + .bootloader)
+
+Data:         46 bytes (4.5% Full)
+(.data + .bss + .noinit)
+
+
+'Finished building: sizedummy'
+' '
+
+03:07:19 Build Finished. 0 errors, 0 warnings. (took 365ms)
+

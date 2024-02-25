@@ -1,0 +1,40 @@
+04:32:00 **** Incremental Build of configuration Debug for project My_Keypad_Library ****
+make all 
+'Building file: ../src/lcd.c'
+'Invoking: AVR Compiler'
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"src/lcd.d" -MT"src/lcd.o" -c -o "src/lcd.o" "../src/lcd.c"
+In file included from ../src/micro_config.h:10,
+                 from ../src/lcd.h:6,
+                 from ../src/lcd.c:1:
+d:/eclipse java/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+../src/lcd.c: In function 'LCD_intgerToString':
+../src/lcd.c:108: warning: implicit declaration of function 'itoa'
+'Finished building: ../src/lcd.c'
+' '
+'Building target: My_Keypad_Library.elf'
+'Invoking: AVR C Linker'
+avr-gcc -Wl,-Map,My_Keypad_Library.map -mmcu=atmega16 -o "My_Keypad_Library.elf"  ./src/keypad.o ./src/lcd.o ./src/main.o   
+'Finished building target: My_Keypad_Library.elf'
+' '
+'Invoking: AVR Create Extended Listing'
+avr-objdump -h -S My_Keypad_Library.elf  >"My_Keypad_Library.lss"
+'Finished building: My_Keypad_Library.lss'
+' '
+'Invoking: Print Size'
+avr-size --format=avr --mcu=atmega16 My_Keypad_Library.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    8362 bytes (51.0% Full)
+(.text + .data + .bootloader)
+
+Data:          8 bytes (0.8% Full)
+(.data + .bss + .noinit)
+
+
+'Finished building: sizedummy'
+' '
+
+04:32:02 Build Finished. 0 errors, 2 warnings. (took 1s.314ms)
+

@@ -1,0 +1,468 @@
+
+My_EEPROM_I2C.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000002d0  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .stab         00000a20  00000000  00000000  00000324  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  2 .stabstr      000008bd  00000000  00000000  00000d44  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d4 e0       	ldi	r29, 0x04	; 4
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 5b 01 	call	0x2b6	; 0x2b6 <main>
+  64:	0c 94 66 01 	jmp	0x2cc	; 0x2cc <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <EEPROM_init>:
+#include "External_EEPROM.h"
+#include "i2c.h"
+
+void EEPROM_init(){
+  6c:	df 93       	push	r29
+  6e:	cf 93       	push	r28
+  70:	cd b7       	in	r28, 0x3d	; 61
+  72:	de b7       	in	r29, 0x3e	; 62
+	TWI_init();
+  74:	0e 94 de 00 	call	0x1bc	; 0x1bc <TWI_init>
+}
+  78:	cf 91       	pop	r28
+  7a:	df 91       	pop	r29
+  7c:	08 95       	ret
+
+0000007e <EEPROM_writeByte>:
+uint8 EEPROM_writeByte(uint16 u16addr,uint8 u8data){
+  7e:	df 93       	push	r29
+  80:	cf 93       	push	r28
+  82:	00 d0       	rcall	.+0      	; 0x84 <EEPROM_writeByte+0x6>
+  84:	00 d0       	rcall	.+0      	; 0x86 <EEPROM_writeByte+0x8>
+  86:	cd b7       	in	r28, 0x3d	; 61
+  88:	de b7       	in	r29, 0x3e	; 62
+  8a:	9a 83       	std	Y+2, r25	; 0x02
+  8c:	89 83       	std	Y+1, r24	; 0x01
+  8e:	6b 83       	std	Y+3, r22	; 0x03
+	if (TWI_getStatus() != TW_START){
+  90:	0e 94 4c 01 	call	0x298	; 0x298 <TWI_getStatus>
+  94:	88 30       	cpi	r24, 0x08	; 8
+  96:	11 f0       	breq	.+4      	; 0x9c <EEPROM_writeByte+0x1e>
+			return ERROR;
+  98:	1c 82       	std	Y+4, r1	; 0x04
+  9a:	28 c0       	rjmp	.+80     	; 0xec <EEPROM_writeByte+0x6e>
+	}//                                       A10,A9,A8, (R/W = 0)"Write"
+	//                             1010 or (SlaveAdress & 0111 0000 0000) >> 7)
+	TWI_write((uint8)(0xA0 | ( (u16addr & 0x0700)>>7) ));
+  9c:	89 81       	ldd	r24, Y+1	; 0x01
+  9e:	9a 81       	ldd	r25, Y+2	; 0x02
+  a0:	80 70       	andi	r24, 0x00	; 0
+  a2:	97 70       	andi	r25, 0x07	; 7
+  a4:	88 0f       	add	r24, r24
+  a6:	89 2f       	mov	r24, r25
+  a8:	88 1f       	adc	r24, r24
+  aa:	99 0b       	sbc	r25, r25
+  ac:	91 95       	neg	r25
+  ae:	80 6a       	ori	r24, 0xA0	; 160
+  b0:	0e 94 0f 01 	call	0x21e	; 0x21e <TWI_write>
+
+	if (TWI_getStatus() != TW_MT_SLA_W_ACK){
+  b4:	0e 94 4c 01 	call	0x298	; 0x298 <TWI_getStatus>
+  b8:	88 31       	cpi	r24, 0x18	; 24
+  ba:	11 f0       	breq	.+4      	; 0xc0 <EEPROM_writeByte+0x42>
+		return ERROR;
+  bc:	1c 82       	std	Y+4, r1	; 0x04
+  be:	16 c0       	rjmp	.+44     	; 0xec <EEPROM_writeByte+0x6e>
+	}
+	TWI_write((uint8)(u16addr)); // Send the required Memory Location
+  c0:	89 81       	ldd	r24, Y+1	; 0x01
+  c2:	0e 94 0f 01 	call	0x21e	; 0x21e <TWI_write>
+
+	if(TWI_getStatus() != TW_MT_DATA_ACK){
+  c6:	0e 94 4c 01 	call	0x298	; 0x298 <TWI_getStatus>
+  ca:	88 32       	cpi	r24, 0x28	; 40
+  cc:	11 f0       	breq	.+4      	; 0xd2 <EEPROM_writeByte+0x54>
+		return ERROR;
+  ce:	1c 82       	std	Y+4, r1	; 0x04
+  d0:	0d c0       	rjmp	.+26     	; 0xec <EEPROM_writeByte+0x6e>
+	}
+	TWI_write(u8data);// write byte to eeprom
+  d2:	8b 81       	ldd	r24, Y+3	; 0x03
+  d4:	0e 94 0f 01 	call	0x21e	; 0x21e <TWI_write>
+
+	if (TWI_getStatus() != TW_MT_DATA_ACK){
+  d8:	0e 94 4c 01 	call	0x298	; 0x298 <TWI_getStatus>
+  dc:	88 32       	cpi	r24, 0x28	; 40
+  de:	11 f0       	breq	.+4      	; 0xe4 <EEPROM_writeByte+0x66>
+		return ERROR;
+  e0:	1c 82       	std	Y+4, r1	; 0x04
+  e2:	04 c0       	rjmp	.+8      	; 0xec <EEPROM_writeByte+0x6e>
+	}
+	TWI_stop();
+  e4:	0e 94 04 01 	call	0x208	; 0x208 <TWI_stop>
+	return SUCCESS;
+  e8:	81 e0       	ldi	r24, 0x01	; 1
+  ea:	8c 83       	std	Y+4, r24	; 0x04
+  ec:	8c 81       	ldd	r24, Y+4	; 0x04
+}
+  ee:	0f 90       	pop	r0
+  f0:	0f 90       	pop	r0
+  f2:	0f 90       	pop	r0
+  f4:	0f 90       	pop	r0
+  f6:	cf 91       	pop	r28
+  f8:	df 91       	pop	r29
+  fa:	08 95       	ret
+
+000000fc <EEPROM_readByte>:
+uint8 EEPROM_readByte(uint16 u16addr,uint8 *u8data){
+  fc:	df 93       	push	r29
+  fe:	cf 93       	push	r28
+ 100:	00 d0       	rcall	.+0      	; 0x102 <EEPROM_readByte+0x6>
+ 102:	00 d0       	rcall	.+0      	; 0x104 <EEPROM_readByte+0x8>
+ 104:	0f 92       	push	r0
+ 106:	cd b7       	in	r28, 0x3d	; 61
+ 108:	de b7       	in	r29, 0x3e	; 62
+ 10a:	9a 83       	std	Y+2, r25	; 0x02
+ 10c:	89 83       	std	Y+1, r24	; 0x01
+ 10e:	7c 83       	std	Y+4, r23	; 0x04
+ 110:	6b 83       	std	Y+3, r22	; 0x03
+	TWI_start();
+ 112:	0e 94 f4 00 	call	0x1e8	; 0x1e8 <TWI_start>
+	if (TWI_getStatus() != TW_START){
+ 116:	0e 94 4c 01 	call	0x298	; 0x298 <TWI_getStatus>
+ 11a:	88 30       	cpi	r24, 0x08	; 8
+ 11c:	11 f0       	breq	.+4      	; 0x122 <EEPROM_readByte+0x26>
+		return ERROR;
+ 11e:	1d 82       	std	Y+5, r1	; 0x05
+ 120:	44 c0       	rjmp	.+136    	; 0x1aa <EEPROM_readByte+0xae>
+	}
+	TWI_write((uint8)((0xA0) | ((u16addr & 0x0700)>>7)));
+ 122:	89 81       	ldd	r24, Y+1	; 0x01
+ 124:	9a 81       	ldd	r25, Y+2	; 0x02
+ 126:	80 70       	andi	r24, 0x00	; 0
+ 128:	97 70       	andi	r25, 0x07	; 7
+ 12a:	88 0f       	add	r24, r24
+ 12c:	89 2f       	mov	r24, r25
+ 12e:	88 1f       	adc	r24, r24
+ 130:	99 0b       	sbc	r25, r25
+ 132:	91 95       	neg	r25
+ 134:	80 6a       	ori	r24, 0xA0	; 160
+ 136:	0e 94 0f 01 	call	0x21e	; 0x21e <TWI_write>
+
+	if (TWI_getStatus() != TW_MT_SLA_W_ACK){
+ 13a:	0e 94 4c 01 	call	0x298	; 0x298 <TWI_getStatus>
+ 13e:	88 31       	cpi	r24, 0x18	; 24
+ 140:	11 f0       	breq	.+4      	; 0x146 <EEPROM_readByte+0x4a>
+		return ERROR;
+ 142:	1d 82       	std	Y+5, r1	; 0x05
+ 144:	32 c0       	rjmp	.+100    	; 0x1aa <EEPROM_readByte+0xae>
+	}
+
+	TWI_write((uint8)(u16addr)); // Memory Location.
+ 146:	89 81       	ldd	r24, Y+1	; 0x01
+ 148:	0e 94 0f 01 	call	0x21e	; 0x21e <TWI_write>
+	if (TWI_getStatus() != TW_MT_DATA_ACK){
+ 14c:	0e 94 4c 01 	call	0x298	; 0x298 <TWI_getStatus>
+ 150:	88 32       	cpi	r24, 0x28	; 40
+ 152:	11 f0       	breq	.+4      	; 0x158 <EEPROM_readByte+0x5c>
+		return ERROR;
+ 154:	1d 82       	std	Y+5, r1	; 0x05
+ 156:	29 c0       	rjmp	.+82     	; 0x1aa <EEPROM_readByte+0xae>
+	}
+
+	//////Send Repeated Start Bit//////
+	TWI_start(); // repeated start
+ 158:	0e 94 f4 00 	call	0x1e8	; 0x1e8 <TWI_start>
+	if(TWI_getStatus() != TW_REP_START){
+ 15c:	0e 94 4c 01 	call	0x298	; 0x298 <TWI_getStatus>
+ 160:	80 31       	cpi	r24, 0x10	; 16
+ 162:	11 f0       	breq	.+4      	; 0x168 <EEPROM_readByte+0x6c>
+		return ERROR;
+ 164:	1d 82       	std	Y+5, r1	; 0x05
+ 166:	21 c0       	rjmp	.+66     	; 0x1aa <EEPROM_readByte+0xae>
+	}
+
+	//                                          Memory Location + Read
+	TWI_write((uint8)((0xA0) | ((u16addr & 0x0700)>>7) | 1));
+ 168:	89 81       	ldd	r24, Y+1	; 0x01
+ 16a:	9a 81       	ldd	r25, Y+2	; 0x02
+ 16c:	80 70       	andi	r24, 0x00	; 0
+ 16e:	97 70       	andi	r25, 0x07	; 7
+ 170:	88 0f       	add	r24, r24
+ 172:	89 2f       	mov	r24, r25
+ 174:	88 1f       	adc	r24, r24
+ 176:	99 0b       	sbc	r25, r25
+ 178:	91 95       	neg	r25
+ 17a:	81 6a       	ori	r24, 0xA1	; 161
+ 17c:	0e 94 0f 01 	call	0x21e	; 0x21e <TWI_write>
+	if(TWI_getStatus() != TW_MT_SLA_R_ACK){
+ 180:	0e 94 4c 01 	call	0x298	; 0x298 <TWI_getStatus>
+ 184:	80 34       	cpi	r24, 0x40	; 64
+ 186:	11 f0       	breq	.+4      	; 0x18c <EEPROM_readByte+0x90>
+		return ERROR;
+ 188:	1d 82       	std	Y+5, r1	; 0x05
+ 18a:	0f c0       	rjmp	.+30     	; 0x1aa <EEPROM_readByte+0xae>
+	}
+
+	*u8data = TWI_readWithNACK();
+ 18c:	0e 94 39 01 	call	0x272	; 0x272 <TWI_readWithNACK>
+ 190:	eb 81       	ldd	r30, Y+3	; 0x03
+ 192:	fc 81       	ldd	r31, Y+4	; 0x04
+ 194:	80 83       	st	Z, r24
+	if(TWI_getStatus() != TW_MR_DATA_NACK){
+ 196:	0e 94 4c 01 	call	0x298	; 0x298 <TWI_getStatus>
+ 19a:	88 35       	cpi	r24, 0x58	; 88
+ 19c:	11 f0       	breq	.+4      	; 0x1a2 <EEPROM_readByte+0xa6>
+		return ERROR;
+ 19e:	1d 82       	std	Y+5, r1	; 0x05
+ 1a0:	04 c0       	rjmp	.+8      	; 0x1aa <EEPROM_readByte+0xae>
+	}
+	TWI_stop();
+ 1a2:	0e 94 04 01 	call	0x208	; 0x208 <TWI_stop>
+	return SUCCESS;
+ 1a6:	81 e0       	ldi	r24, 0x01	; 1
+ 1a8:	8d 83       	std	Y+5, r24	; 0x05
+ 1aa:	8d 81       	ldd	r24, Y+5	; 0x05
+
+}
+ 1ac:	0f 90       	pop	r0
+ 1ae:	0f 90       	pop	r0
+ 1b0:	0f 90       	pop	r0
+ 1b2:	0f 90       	pop	r0
+ 1b4:	0f 90       	pop	r0
+ 1b6:	cf 91       	pop	r28
+ 1b8:	df 91       	pop	r29
+ 1ba:	08 95       	ret
+
+000001bc <TWI_init>:
+#include "i2c.h"
+
+void TWI_init(){
+ 1bc:	df 93       	push	r29
+ 1be:	cf 93       	push	r28
+ 1c0:	cd b7       	in	r28, 0x3d	; 61
+ 1c2:	de b7       	in	r29, 0x3e	; 62
+	TWBR = 0x02; // Bit Rate: 400.000 kbps using 0 prescaler "TWSR" and F_cpu = 8MHZ;
+ 1c4:	e0 e2       	ldi	r30, 0x20	; 32
+ 1c6:	f0 e0       	ldi	r31, 0x00	; 0
+ 1c8:	82 e0       	ldi	r24, 0x02	; 2
+ 1ca:	80 83       	st	Z, r24
+	TWSR = 0;
+ 1cc:	e1 e2       	ldi	r30, 0x21	; 33
+ 1ce:	f0 e0       	ldi	r31, 0x00	; 0
+ 1d0:	10 82       	st	Z, r1
+	TWI address bits contain TWI 7-bit address with which it can called by other masters in slave mode.
+
+	Bit 0 – TWGCE: TWI general call enable bit
+	TWI general call enable bit when set it enables recognition of general call over the TWI bus
+*/
+	TWAR = 0b00000010;  // My address for slave mode.
+ 1d2:	e2 e2       	ldi	r30, 0x22	; 34
+ 1d4:	f0 e0       	ldi	r31, 0x00	; 0
+ 1d6:	82 e0       	ldi	r24, 0x02	; 2
+ 1d8:	80 83       	st	Z, r24
+	TWCR = (1<<TWEN); // TWI enable bit
+ 1da:	e6 e5       	ldi	r30, 0x56	; 86
+ 1dc:	f0 e0       	ldi	r31, 0x00	; 0
+ 1de:	84 e0       	ldi	r24, 0x04	; 4
+ 1e0:	80 83       	st	Z, r24
+}
+ 1e2:	cf 91       	pop	r28
+ 1e4:	df 91       	pop	r29
+ 1e6:	08 95       	ret
+
+000001e8 <TWI_start>:
+void TWI_start(){
+ 1e8:	df 93       	push	r29
+ 1ea:	cf 93       	push	r28
+ 1ec:	cd b7       	in	r28, 0x3d	; 61
+ 1ee:	de b7       	in	r29, 0x3e	; 62
+	TWCR = (1<<TWINT) | (1<<TWSTA) | (1<<TWEN); // Clear flag for further use , Start bit, Enable I2C bit
+ 1f0:	e6 e5       	ldi	r30, 0x56	; 86
+ 1f2:	f0 e0       	ldi	r31, 0x00	; 0
+ 1f4:	84 ea       	ldi	r24, 0xA4	; 164
+ 1f6:	80 83       	st	Z, r24
+	while(bitIsClear(TWCR,TWINT)); // While is cleared wait , But when transmit is successful continue.
+ 1f8:	e6 e5       	ldi	r30, 0x56	; 86
+ 1fa:	f0 e0       	ldi	r31, 0x00	; 0
+ 1fc:	80 81       	ld	r24, Z
+ 1fe:	88 23       	and	r24, r24
+ 200:	dc f7       	brge	.-10     	; 0x1f8 <TWI_start+0x10>
+}
+ 202:	cf 91       	pop	r28
+ 204:	df 91       	pop	r29
+ 206:	08 95       	ret
+
+00000208 <TWI_stop>:
+void TWI_stop(){
+ 208:	df 93       	push	r29
+ 20a:	cf 93       	push	r28
+ 20c:	cd b7       	in	r28, 0x3d	; 61
+ 20e:	de b7       	in	r29, 0x3e	; 62
+	TWCR = (1<<TWINT) | (1<<TWSTO) | (1<<TWEN); // Clear flag for further use , Stop bit, Enable I2C Bit.
+ 210:	e6 e5       	ldi	r30, 0x56	; 86
+ 212:	f0 e0       	ldi	r31, 0x00	; 0
+ 214:	84 e9       	ldi	r24, 0x94	; 148
+ 216:	80 83       	st	Z, r24
+	// Here I don't care about checking the flag because I have already stopped.
+}
+ 218:	cf 91       	pop	r28
+ 21a:	df 91       	pop	r29
+ 21c:	08 95       	ret
+
+0000021e <TWI_write>:
+void TWI_write(uint8 data){
+ 21e:	df 93       	push	r29
+ 220:	cf 93       	push	r28
+ 222:	0f 92       	push	r0
+ 224:	cd b7       	in	r28, 0x3d	; 61
+ 226:	de b7       	in	r29, 0x3e	; 62
+ 228:	89 83       	std	Y+1, r24	; 0x01
+	TWDR = data;
+ 22a:	e3 e2       	ldi	r30, 0x23	; 35
+ 22c:	f0 e0       	ldi	r31, 0x00	; 0
+ 22e:	89 81       	ldd	r24, Y+1	; 0x01
+ 230:	80 83       	st	Z, r24
+	TWCR = (1<<TWINT) | (1<<TWEN);// Clear flag for further use, Enable I2C bit
+ 232:	e6 e5       	ldi	r30, 0x56	; 86
+ 234:	f0 e0       	ldi	r31, 0x00	; 0
+ 236:	84 e8       	ldi	r24, 0x84	; 132
+ 238:	80 83       	st	Z, r24
+	while(bitIsClear(TWCR,TWINT));
+ 23a:	e6 e5       	ldi	r30, 0x56	; 86
+ 23c:	f0 e0       	ldi	r31, 0x00	; 0
+ 23e:	80 81       	ld	r24, Z
+ 240:	88 23       	and	r24, r24
+ 242:	dc f7       	brge	.-10     	; 0x23a <TWI_write+0x1c>
+}
+ 244:	0f 90       	pop	r0
+ 246:	cf 91       	pop	r28
+ 248:	df 91       	pop	r29
+ 24a:	08 95       	ret
+
+0000024c <TWI_readWithACK>:
+uint8 TWI_readWithACK(){
+ 24c:	df 93       	push	r29
+ 24e:	cf 93       	push	r28
+ 250:	cd b7       	in	r28, 0x3d	; 61
+ 252:	de b7       	in	r29, 0x3e	; 62
+	TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWEA);
+ 254:	e6 e5       	ldi	r30, 0x56	; 86
+ 256:	f0 e0       	ldi	r31, 0x00	; 0
+ 258:	84 ec       	ldi	r24, 0xC4	; 196
+ 25a:	80 83       	st	Z, r24
+	while(bitIsClear(TWCR,TWINT));
+ 25c:	e6 e5       	ldi	r30, 0x56	; 86
+ 25e:	f0 e0       	ldi	r31, 0x00	; 0
+ 260:	80 81       	ld	r24, Z
+ 262:	88 23       	and	r24, r24
+ 264:	dc f7       	brge	.-10     	; 0x25c <TWI_readWithACK+0x10>
+	return TWDR;
+ 266:	e3 e2       	ldi	r30, 0x23	; 35
+ 268:	f0 e0       	ldi	r31, 0x00	; 0
+ 26a:	80 81       	ld	r24, Z
+}
+ 26c:	cf 91       	pop	r28
+ 26e:	df 91       	pop	r29
+ 270:	08 95       	ret
+
+00000272 <TWI_readWithNACK>:
+uint8 TWI_readWithNACK(){
+ 272:	df 93       	push	r29
+ 274:	cf 93       	push	r28
+ 276:	cd b7       	in	r28, 0x3d	; 61
+ 278:	de b7       	in	r29, 0x3e	; 62
+	TWCR = (1<<TWINT) | (1<<TWEN);
+ 27a:	e6 e5       	ldi	r30, 0x56	; 86
+ 27c:	f0 e0       	ldi	r31, 0x00	; 0
+ 27e:	84 e8       	ldi	r24, 0x84	; 132
+ 280:	80 83       	st	Z, r24
+	while(bitIsClear(TWCR,TWINT));
+ 282:	e6 e5       	ldi	r30, 0x56	; 86
+ 284:	f0 e0       	ldi	r31, 0x00	; 0
+ 286:	80 81       	ld	r24, Z
+ 288:	88 23       	and	r24, r24
+ 28a:	dc f7       	brge	.-10     	; 0x282 <TWI_readWithNACK+0x10>
+	return TWDR;
+ 28c:	e3 e2       	ldi	r30, 0x23	; 35
+ 28e:	f0 e0       	ldi	r31, 0x00	; 0
+ 290:	80 81       	ld	r24, Z
+}
+ 292:	cf 91       	pop	r28
+ 294:	df 91       	pop	r29
+ 296:	08 95       	ret
+
+00000298 <TWI_getStatus>:
+uint8 TWI_getStatus(){
+ 298:	df 93       	push	r29
+ 29a:	cf 93       	push	r28
+ 29c:	0f 92       	push	r0
+ 29e:	cd b7       	in	r28, 0x3d	; 61
+ 2a0:	de b7       	in	r29, 0x3e	; 62
+	uint8 status;
+	status = TWSR & 0xf8; // I only need the last 5 bit (status bits)
+ 2a2:	e1 e2       	ldi	r30, 0x21	; 33
+ 2a4:	f0 e0       	ldi	r31, 0x00	; 0
+ 2a6:	80 81       	ld	r24, Z
+ 2a8:	88 7f       	andi	r24, 0xF8	; 248
+ 2aa:	89 83       	std	Y+1, r24	; 0x01
+	return status;
+ 2ac:	89 81       	ldd	r24, Y+1	; 0x01
+}
+ 2ae:	0f 90       	pop	r0
+ 2b0:	cf 91       	pop	r28
+ 2b2:	df 91       	pop	r29
+ 2b4:	08 95       	ret
+
+000002b6 <main>:
+#include "i2c.h"
+#include "External_EEPROM.h"
+int main(int argc, char **argv) {
+ 2b6:	df 93       	push	r29
+ 2b8:	cf 93       	push	r28
+ 2ba:	00 d0       	rcall	.+0      	; 0x2bc <main+0x6>
+ 2bc:	00 d0       	rcall	.+0      	; 0x2be <main+0x8>
+ 2be:	cd b7       	in	r28, 0x3d	; 61
+ 2c0:	de b7       	in	r29, 0x3e	; 62
+ 2c2:	9a 83       	std	Y+2, r25	; 0x02
+ 2c4:	89 83       	std	Y+1, r24	; 0x01
+ 2c6:	7c 83       	std	Y+4, r23	; 0x04
+ 2c8:	6b 83       	std	Y+3, r22	; 0x03
+ 2ca:	ff cf       	rjmp	.-2      	; 0x2ca <main+0x14>
+
+000002cc <_exit>:
+ 2cc:	f8 94       	cli
+
+000002ce <__stop_program>:
+ 2ce:	ff cf       	rjmp	.-2      	; 0x2ce <__stop_program>

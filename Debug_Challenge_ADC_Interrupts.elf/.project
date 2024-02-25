@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>Debug_Challenge_ADC_Interrupts.elf</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.cdt.core.cnature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>Challenge_ADC_Interrupts.elf</name>
+			<type>1</type>
+			<location>D:/Eclipse Java/eclipse/workspace/AVR/8.ADC/ADC_Eclipse_Exercises/Challenge_ADC_Interrupts/Debug/Challenge_ADC_Interrupts.elf</location>
+		</link>
+		<link>
+			<name>Potentiometer_Example.elf</name>
+			<type>1</type>
+			<location>D:/Eclipse Java/eclipse/workspace/AVR/8.ADC/ADC_Eclipse_Exercises/Potentiometer_Example/Debug/Potentiometer_Example.elf</location>
+		</link>
+		<link>
+			<name>Temp_Sensor_Example.elf</name>
+			<type>1</type>
+			<location>D:/Eclipse Java/eclipse/workspace/AVR/8.ADC/ADC_Eclipse_Exercises/Temp_Sensor_Example/Debug/Temp_Sensor_Example.elf</location>
+		</link>
+	</linkedResources>
+</projectDescription>

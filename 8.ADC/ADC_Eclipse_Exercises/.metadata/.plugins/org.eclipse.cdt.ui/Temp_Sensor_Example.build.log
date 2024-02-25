@@ -1,0 +1,20 @@
+15:41:11 **** Build of configuration Debug for project Temp_Sensor_Example ****
+make all 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 Temp_Sensor_Example.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    6942 bytes (42.4% Full)
+(.text + .data + .bootloader)
+
+Data:        272 bytes (26.6% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
+
+15:41:11 Build Finished (took 250ms)
+

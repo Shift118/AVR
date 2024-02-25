@@ -1,0 +1,36 @@
+23:14:55 **** Incremental Build of configuration Debug for project FastPWM ****
+make all 
+'Building file: ../src/main.c'
+'Invoking: AVR Compiler'
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"src/main.d" -MT"src/main.o" -c -o "src/main.o" "../src/main.c"
+In file included from ../src/main.c:2:
+d:/eclipse java/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+'Finished building: ../src/main.c'
+' '
+'Building target: FastPWM.elf'
+'Invoking: AVR C Linker'
+avr-gcc -Wl,-Map,FastPWM.map -mmcu=atmega16 -o "FastPWM.elf"  ./src/main.o   
+'Finished building target: FastPWM.elf'
+' '
+'Invoking: AVR Create Extended Listing'
+avr-objdump -h -S FastPWM.elf  >"FastPWM.lss"
+'Finished building: FastPWM.lss'
+' '
+'Invoking: Print Size'
+avr-size --format=avr --mcu=atmega16 FastPWM.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    4020 bytes (24.5% Full)
+(.text + .data + .bootloader)
+
+Data:          8 bytes (0.8% Full)
+(.data + .bss + .noinit)
+
+
+'Finished building: sizedummy'
+' '
+
+23:14:57 Build Finished. 0 errors, 1 warnings. (took 1s.493ms)
+

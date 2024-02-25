@@ -1,0 +1,34 @@
+14:27:21 **** Incremental Build of configuration Debug for project MotorDriver_3Buttons ****
+make all 
+'Building file: ../src/main.c'
+'Invoking: AVR Compiler'
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"src/main.d" -MT"src/main.o" -c -o "src/main.o" "../src/main.c"
+'Finished building: ../src/main.c'
+' '
+'Building target: MotorDriver_3Buttons.elf'
+'Invoking: AVR C Linker'
+avr-gcc -Wl,-Map,MotorDriver_3Buttons.map -mmcu=atmega16 -o "MotorDriver_3Buttons.elf"  ./src/main.o   
+'Finished building target: MotorDriver_3Buttons.elf'
+' '
+'Invoking: AVR Create Extended Listing'
+avr-objdump -h -S MotorDriver_3Buttons.elf  >"MotorDriver_3Buttons.lss"
+'Finished building: MotorDriver_3Buttons.lss'
+' '
+'Invoking: Print Size'
+avr-size --format=avr --mcu=atmega16 MotorDriver_3Buttons.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:     362 bytes (2.2% Full)
+(.text + .data + .bootloader)
+
+Data:          0 bytes (0.0% Full)
+(.data + .bss + .noinit)
+
+
+'Finished building: sizedummy'
+' '
+
+14:27:22 Build Finished. 0 errors, 0 warnings. (took 1s.275ms)
+

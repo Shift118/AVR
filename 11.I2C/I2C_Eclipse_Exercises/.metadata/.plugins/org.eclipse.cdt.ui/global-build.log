@@ -1,0 +1,22 @@
+20:39:26 **** Incremental Build of configuration Debug for project example ****
+Info: Internal Builder is used for build
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\example.o" "..\\src\\example.c" 
+gcc -o example.exe "src\\example.o" 
+Info: Nothing to build for example
+15:42:33 **** Build of configuration Debug for project EEPROM_I2C ****
+make all 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 EEPROM_I2C.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    3886 bytes (23.7% Full)
+(.text + .data + .bootloader)
+
+Data:          8 bytes (0.8% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
